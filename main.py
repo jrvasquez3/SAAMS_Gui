@@ -46,6 +46,7 @@ class Window_main:
         lbl4 = tb.Label(self.tab1, text="Coil's Gauge:").grid(row=4, column=0, columnspan=3, sticky="e")
         lbl5 = tb.Label(self.tab1, text="Cutting Gap %:").grid(row=5, column=0, columnspan=3, sticky="e")
         lbl6 = tb.Label(self.tab1, text="Clearance:").grid(row=6, column=0, columnspan=3, sticky="e")
+        lbl7 = tb.Label(self.tab1, text="Units:").grid(row=7, column=0, columnspan=3, sticky="e")
         
         # Add Entry
         self.batch, self.name, self.width, self.gauge, self.gap, self.clearance = self.create_entry_tab1(self)
@@ -55,8 +56,11 @@ class Window_main:
         self.clearance.bind("<KeyRelease>", lambda event, label_num=self.clearance, box_sec=self.gauge, out=self.gap: tkb.calculator_key_release(event, "div", label_num , box_sec, out))
 
         # Add Buttons
-        self.submit = tb.Button(self.tab1, command=self.submit_tab1, text="submit").grid(row=7, column=4)
-        self.clear = tb.Button(self.tab1, command=self.clear_tab1, text="Clear").grid(row=7, column=2)
+        self.unit = tb.Combobox(self.tab1, values=['Milimeter (mm)', 'Inches (in)'], width=15, state="readonly")
+        self.unit.set('Milimeter (mm)')
+        self.unit.grid(row=7, column=4)
+        self.submit = tb.Button(self.tab1, command=self.submit_tab1, text="submit").grid(row=8, column=4)
+        self.clear = tb.Button(self.tab1, command=self.clear_tab1, text="Clear").grid(row=8, column=2)
         
         # ---------------------------------- Add to tab 2 ---------------------------------------------
         label2 = tb.Label(self.tab2, text="This is Tab 2").grid(row=0, column=0)
@@ -79,21 +83,25 @@ class Window_main:
 
     def create_entry_tab1(self, event):
         self.a = {}
-        numeric = [False, False, True, True, True, True]
+        numeric = [True, False, True, True, True, True]
         for i in range(1, 7):
             self.a[i] = tb.Entry(self.tab1)
             self.a[i].grid(row=i, column=4, sticky="w")
             self.a[i].bind("<Down>", tkb.input_frame_down)
             self.a[i].bind("<Up>", tkb.input_frame_up)
             self.a[i].bind("<Return>", self.enter_key_tab1)
-            self.a[i].insert(0, 0)
             if numeric[i - 1] == True:
                 key_stroke_validation = self.a[i].register(tkb.correct_int)
                 self.a[i].config(validate="key", validatecommand=(key_stroke_validation, '%P'))
+                self.a[i].insert(0, 0)
         return [self.a[1], self.a[2], self.a[3], self.a[4], self.a[5], self.a[6]]
 
     
     def clear_tab1(self):
+        a = [self.batch, self.name, self.width, self.gauge, self.gap, self.clearance]
+        for i in a:
+            i.delete(0, tb.tk.END)
+            i.insert(0, 0)
         return
 
 
