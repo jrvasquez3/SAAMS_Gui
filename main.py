@@ -87,6 +87,9 @@ class Window_main:
             self.a[i].bind("<Up>", tkb.input_frame_up)
             self.a[i].bind("<Return>", self.enter_key_tab1)
             self.a[i].insert(0, 0)
+            if numeric[i - 1] == True:
+                key_stroke_validation = self.a[i].register(tkb.correct_int)
+                self.a[i].config(validate="key", validatecommand=(key_stroke_validation, '%P'))
         return [self.a[1], self.a[2], self.a[3], self.a[4], self.a[5], self.a[6]]
 
     

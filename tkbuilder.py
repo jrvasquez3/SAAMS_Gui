@@ -61,3 +61,37 @@ def calculator_key_release(event, operation ,box_label_num, box_2,output_box):
         output_box.delete(0, tb.tk.END)
         output_box.insert(0, round(resultant, 2))
     return
+
+
+# Allows only numbers and floats to be typed into entry, not strings
+def correct_int(key_val):
+    '''
+    Function used to check wether a pressed key is a number resulting a float
+
+    Ex: Pressing 1-9 will succeed
+        Pressing "." resulting in a float will succeed
+        Pressing any other character will NOT succeed
+
+    To use , the following is an example of code:
+    
+    key_stroke_validation = self.a[i].register(tkb.correct_int)
+    self.a[i].config(validate="key", validatecommand=(key_stroke_validation, '%P'))
+    
+    '''
+    # Check if keys is numberic
+    if key_val.isnumeric():
+        return True
+        # Check if keys is empty
+    elif key_val == "":
+        return True
+    else:
+        # Check if keys is float 
+        try:
+            float_test = float(key_val)
+        except ValueError:
+            float_test = key_val
+        if isinstance(float_test, float) == True:
+            return True
+            # test fails. Prevents key from being typed into box
+        else:
+            return False
