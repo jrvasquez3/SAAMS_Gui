@@ -63,11 +63,16 @@ class Window_main:
         self.clear = tb.Button(self.tab1, command=self.clear_tab1, text="Clear").grid(row=8, column=2)
 
 
-        # Add Table
-        self.table_t1_frame = tb.Frame(self.tab1)
-        self.table_t1_frame.grid(row=0, column=6, rowspan=10, padx=25)
-        self.table = tkb.Table_tab1(self.table_t1_frame)
-        self.table_t1_frame.grid_remove()
+        # Add Tab1 Expansion after Submit
+        self.tab1_expand = tb.Frame(self.tab1)
+        self.tab1_expand_dash = tb.Frame(self.tab1_expand)
+        self.tab1_expand_table = tb.Frame(self.tab1_expand)
+        self.tab1_expand_dash.grid(row=0, column=6, rowspan=4, padx=25)
+        self.tab1_expand_table.grid(row=4, column=6, rowspan=10, padx=25)
+        self.dash = tkb.Dash_Tab1(self.tab1_expand_dash)
+        self.table = tkb.Table_tab1(self.tab1_expand_table)
+        self.tab1_expand.grid_remove()
+
 
         
         # ---------------------------------- Add to tab 2 ---------------------------------------------
@@ -82,8 +87,10 @@ class Window_main:
         width = self.width.get()
         gauge = self.gauge.get()
         gap = self.gap.get()
-        self.table_t1_frame.grid(row=0, column=6, rowspan=10, padx=25)
-        print(batch, name, width)
+        clearance = self.clearance.get()
+        unit = self.unit.get()
+        self.tab1_expand.grid(row=0, column=6, rowspan=10, padx=25)
+        self.dash.display_converted_units([width, gauge, clearance, unit])
 
     # Enter Key - Submit function 
     def enter_key_tab1(self, event):
@@ -108,7 +115,7 @@ class Window_main:
     
     def clear_tab1(self):
         a = [self.batch, self.name, self.width, self.gauge, self.gap, self.clearance]
-        self.table_t1_frame.grid_remove()
+        self.tab1_expand.grid_remove()
         for i in a:
             i.delete(0, tb.tk.END)
             i.insert(0, 0)

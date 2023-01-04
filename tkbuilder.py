@@ -1,15 +1,6 @@
 import ttkbootstrap as tb
 
 
-
-class background_image:
-    def __init__(self, window_name, bg_image_name, bg_width, bg_height ):
-        self.bg_image = tb.PhotoImage(file=bg_image_name)
-        self.place = tb.Canvas(window_name, width=bg_width, height= bg_height )
-        self.place.pack(fill="both", expand=True)
-        self.place.create_image(0,0, image= self.bg_image, anchor="nw") 
-
-
 # Function event to allow user to move between widgets using UP and DOWN keys
 # To call, use "bind()" function. Example: .bind("<Up>")
 def input_frame_down(event):
@@ -20,9 +11,7 @@ def input_frame_up(event):
     event.widget.tk_focusPrev().focus_set()
     return
 
-def key_input(object, event):
-    print(object)
-    return
+
 
 
 
@@ -108,15 +97,14 @@ class Table_tab1:
         counter = 0
         table_entry_style = tb.Style().configure('litera.TEntry', fieldbackground= 'white', foreground='black', insertcolor="black")
         table_label_style = tb.Style().configure('light.TEntry', fieldbackground= '#FF7F7F', foreground='black')
-        for rows in range(0, ROWS):
+        for rows in range(1, ROWS):
             for col in range(0, COLS):
-                if rows == 0:
+                if rows == 1:
                     self.label[counter] = tb.Entry(frame, style="light.TEntry", width=20)
                     self.label[counter].grid(row=rows, column=col)
                     self.label[counter].insert(0, col_names[col])
                     self.label[counter].configure(state="readonly")
-
-                elif rows != 0:
+                elif rows != 1:
                     self.entry[counter] = tb.Entry(frame, style="litera.TEntry", width=20)
                     self.entry[counter].grid(row=rows, column= col)
                     self.entry[counter].bind("<Down>", lambda event, self_ = self.entry, c = counter: self.down(event, self_, c, COLS))
@@ -140,3 +128,73 @@ class Table_tab1:
         return
 
 
+class Dash_Tab1:
+    def __init__(self, frame):
+        # create Selector for Number of Strips
+        num = list(range(1, 21))
+        tb.Label(frame, text='Select Strips:').grid(row=0, column=0)
+        self.strip_num = tb.Combobox(frame, values=num, width=8, state="readonly")
+        self.strip_num.set(1)
+        self.strip_num.grid(row=1, column=0)
+
+        # Create Current Units
+        tb.Label(frame, text='Units: ').grid(row=0, column=1, sticky='w', padx=10)
+        self.units = tb.Label(frame, text='')
+        self.units.grid(row=1, column=1, sticky='w', padx=10)
+
+        # Saved Units - Obtained
+        self.label_units = tb.Label(frame, text="Obtained Data in ")
+        self.label_units.grid(row=0, column=2, sticky='w' ,padx=10)
+        tb.Label(frame, text='width:').grid(row=1, column=2, sticky='w',padx=10)
+        tb.Label(frame, text='Gauge:').grid(row=2, column=2, sticky='w',padx=10)
+        tb.Label(frame, text='Clearance:').grid(row=3, column=2, sticky='w',padx=10)
+        self.width = tb.Label(frame, text='')
+        self.width.grid(row=1, column=2, sticky='e',padx=10)
+        self.gauge = tb.Label(frame, text='')
+        self.gauge.grid(row=2, column=2, sticky='e',padx=10)
+        self.clearance = tb.Label(frame, text='')
+        self.clearance.grid(row=3, column=2, sticky='e',padx=10)
+
+        # Saved Units - Converted
+        self.label_units_c = tb.Label(frame, text="Data Converted to ")
+        self.label_units_c.grid(row=0, column=3, sticky='w' ,padx=10)
+        tb.Label(frame, text='width:').grid(row=1, column=3, sticky='w',padx=10)
+        tb.Label(frame, text='Gauge:').grid(row=2, column=3, sticky='w',padx=10)
+        tb.Label(frame, text='Clearance:').grid(row=3, column=3, sticky='w',padx=10)
+        self.width_converted = tb.Label(frame, text='')
+        self.width_converted.grid(row=1, column=3, sticky='e',padx=10)
+        self.gauge_converted = tb.Label(frame, text='')
+        self.gauge_converted.grid(row=2, column=3, sticky='e',padx=10)
+        self.clearance_converted = tb.Label(frame, text='')
+        self.clearance_converted.grid(row=3, column=3, sticky='e',padx=10)
+        
+    def display_converted_units(self, list_a):
+        self.width.configure(text=str(list_a[0]))
+        self.gauge.configure(text=str(list_a[1]))
+        self.clearance.configure(text=str(list_a[2]))
+        self.units.configure(text=str(list_a[3]))
+        self.label_units.configure(text="Obtained Data in " + str(list_a[3]))
+        if list_a[3] == 'Milimeter (mm)':
+            list_b = self.convert_mm_to_in(list_a[0:3])
+            self.label_units_c.configure(text="Data Converted to Inches (in)")
+        else:
+            list_b = self.convert_in_to_mm(list_a[0:3])
+            self.label_units_c.configure(text="Data Converted to Milimeter (mm)")
+        self.width_converted.configure(text=str(list_b[0]))
+        self.gauge_converted.configure(text=str(list_b[1]))
+        self.clearance_converted.configure(text=str(list_b[2]))
+
+    def convert_mm_to_in(self, list_a):
+        list_b = []
+        for i in list_a:
+            list_b.append(round(float(i) * 0.03937007874, 2))
+        return list_b
+
+    def convert_in_to_mm(self, list_a):
+        list_b = []
+        for i in list_a:
+            list_b.append(round(float(i) * 25.4, 2))
+        return list_b
+
+
+    
