@@ -15,7 +15,19 @@ You can do this by going into your terminal and typing the following:
 
 ```
 pip install ttkbootstrap
+
 ```
 
+
+![Main Menu](README_img\Main_Menu.PNG "Main Menu")
+
+
+
+
 **Currently unfinished product**
+
+--------
+**NOT yet ready for production**
+
+
 **Planning on being deployable by an .exe**
