@@ -73,7 +73,7 @@ def correct_int(key_val):
         Pressing any other character will NOT succeed
 
     To use , the following is an example of code:
-    
+
     key_stroke_validation = self.a[i].register(tkb.correct_int)
     self.a[i].config(validate="key", validatecommand=(key_stroke_validation, '%P'))
     
@@ -95,3 +95,48 @@ def correct_int(key_val):
             # test fails. Prevents key from being typed into box
         else:
             return False
+
+
+class Table_tab1:
+    def __init__(self, frame):
+        ROWS = 4
+        COLS = 4
+        col_names = ["Strip ID", "Strip Qty", "Strip Width (mm)", "Strip Total (mm)" ]
+        self.entry = {}
+        self.label = {}
+        self.var = {}
+        counter = 0
+        table_entry_style = tb.Style().configure('litera.TEntry', fieldbackground= 'white', foreground='black', insertcolor="black")
+        table_label_style = tb.Style().configure('light.TEntry', fieldbackground= '#FF7F7F', foreground='black')
+        for rows in range(0, ROWS):
+            for col in range(0, COLS):
+                if rows == 0:
+                    self.label[counter] = tb.Entry(frame, style="light.TEntry", width=20)
+                    self.label[counter].grid(row=rows, column=col)
+                    self.label[counter].insert(0, col_names[col])
+                    self.label[counter].configure(state="readonly")
+
+                elif rows != 0:
+                    self.entry[counter] = tb.Entry(frame, style="litera.TEntry", width=20)
+                    self.entry[counter].grid(row=rows, column= col)
+                    self.entry[counter].bind("<Down>", lambda event, self_ = self.entry, c = counter: self.down(event, self_, c, COLS))
+                    self.entry[counter].bind("<Up>", lambda event, self_ = self.entry, c = counter: self.up(event, self_, c, COLS))
+                    self.entry[counter].bind("<Left>", lambda event, self_ = self.entry, c = counter: self.left(event, self_, c, COLS))
+                    self.entry[counter].bind("<Right>", lambda event, self_ = self.entry, c = counter: self.right(event, self_, c, COLS))
+                counter = counter + 1
+    
+    # Functions to move through the table using keys "Down", "Up", "Left", "Right"
+    def down(object_table, event, self_, c, cols):
+        self_[c + cols].focus_set()
+        return
+    def up(object_table, event, self_, c, cols):
+        self_[c - cols].focus_set()
+        return
+    def left(object_table, event, self_, c, cols):
+        self_[c - 1].focus_set()
+        return
+    def right(object_table, event, self_, c, cols):
+        self_[c + 1].focus_set()
+        return
+
+

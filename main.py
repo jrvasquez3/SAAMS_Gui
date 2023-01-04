@@ -10,11 +10,11 @@ class Window_main:
         # Add title and geometry
         self.root = root
         self.title = self.root.title("Slitter Arbor Management System")
-        self.geometry = self.root.geometry("1500x900")
+        self.geometry = self.root.geometry("1700x900")
 
         # Create bg image frame
         self.bg_image = tb.PhotoImage(file="img\saams_main.png")
-        self.bg_img = tb.Canvas(self.root, width=1000, height= 800)
+        self.bg_img = tb.Canvas(self.root, width=1100, height= 900)
         self.bg_img.pack(fill="both", expand=True)
         self.bg_img.create_image(0,0, image= self.bg_image, anchor="nw") 
         
@@ -61,6 +61,14 @@ class Window_main:
         self.unit.grid(row=7, column=4)
         self.submit = tb.Button(self.tab1, command=self.submit_tab1, text="submit").grid(row=8, column=4)
         self.clear = tb.Button(self.tab1, command=self.clear_tab1, text="Clear").grid(row=8, column=2)
+
+
+        # Add Table
+        self.table_t1_frame = tb.Frame(self.tab1)
+        self.table_t1_frame.grid(row=0, column=6, rowspan=10, padx=25)
+        self.table = tkb.Table_tab1(self.table_t1_frame)
+        self.table_t1_frame.grid_remove()
+
         
         # ---------------------------------- Add to tab 2 ---------------------------------------------
         label2 = tb.Label(self.tab2, text="This is Tab 2").grid(row=0, column=0)
@@ -74,6 +82,7 @@ class Window_main:
         width = self.width.get()
         gauge = self.gauge.get()
         gap = self.gap.get()
+        self.table_t1_frame.grid(row=0, column=6, rowspan=10, padx=25)
         print(batch, name, width)
 
     # Enter Key - Submit function 
@@ -99,6 +108,7 @@ class Window_main:
     
     def clear_tab1(self):
         a = [self.batch, self.name, self.width, self.gauge, self.gap, self.clearance]
+        self.table_t1_frame.grid_remove()
         for i in a:
             i.delete(0, tb.tk.END)
             i.insert(0, 0)
