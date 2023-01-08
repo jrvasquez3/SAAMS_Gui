@@ -122,33 +122,47 @@ class Tab1_Table:
                     entry.insert(0, data[i][j])
                     if j == (len(data[0]) - 1):
                         entry.configure(style="end.TEntry")
+                    if j != 0:
+                        key_stroke_validation = entry.register(correct_int)
+                        entry.config(validate="key", validatecommand=(key_stroke_validation, '%P'))
+                    entry.grid(row=6, column=j)
                     row.append(entry)
                 else:
                     entry = tb.Entry(self.frame, style="litera.TEntry", width=20)
                     entry.insert(0, data[i][j])
+                    if i == 1 and j == 0:
+                        pass
+                    else:
+                        key_stroke_validation = entry.register(correct_int)
+                        entry.config(validate="key", validatecommand=(key_stroke_validation, '%P'))
                     row.append(entry)
             self.entry_table.append(row)
         
         self.add_grids()
+        self.button_total = tb.Button(frame, text="Total", command=self.calculate_total)
+        self.button_total.grid(row=7, column=(len(data[0]) -1))
 
     # function used to update / add binding to each entry and grid them onto the table to show
     def add_grids(self):
-        for i in range(0, len(self.entry_table)):
+        for i in range(0, len(self.entry_table) - 1):
             for j in range(0, len(self.entry_table[0])):
                 self.entry_table[i][j].bind("<Down>", lambda event, i = i, j = j: self.down(event, i, j))
                 self.entry_table[i][j].bind("<Up>", lambda event, i = i, j = j: self.up(event, i, j))
                 self.entry_table[i][j].bind("<Left>", lambda event, i = i, j = j: self.left(event, i, j))
                 self.entry_table[i][j].bind("<Right>", lambda event, i = i, j = j: self.right(event, i, j))
+                self.entry_table[i][j].bind("<Return>", self.calculate_total)
                 self.entry_table[i][j].grid(row=i, column= j)
+        
 
     # function used to "unbind" and remove grid locations on table. Used to re-update position of rows in table   
     def remove_grid(self):
-        for i in range(0, len(self.entry_table)):
+        for i in range(0, len(self.entry_table) - 1):
             for j in range(0, len(self.entry_table[0])):
                 self.entry_table[i][j].unbind("<Down>")
                 self.entry_table[i][j].unbind("<Up>")
                 self.entry_table[i][j].unbind("<Left>")
                 self.entry_table[i][j].unbind("<Right>")
+                self.entry_table[i][j].unbind("<Return>")
                 self.entry_table[i][j].grid_remove()
 
     # function used to add a New Row to the table
@@ -184,6 +198,14 @@ class Tab1_Table:
             self.entry_table[i][j + 1].focus_set()
         except IndexError:
             pass
+
+    def calculate_total(self, event= False):
+        for row in self.entry_table[1:]:
+            val1 = row[1].get()
+            val2 = row[2].get()
+            total = float(val1)*float(val2)
+            row[3].delete(0, tb.tk.END)
+            row[3].insert(0, round(total, 2))
 
 
 

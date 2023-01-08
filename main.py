@@ -11,18 +11,18 @@ class Window_main:
         # Add title and geometry
         self.root = root
         self.title = self.root.title("Slitter Arbor Management System")
-        self.geometry = self.root.geometry("1900x900")
+        self.geometry = self.root.geometry("2200x1000")
 
         # Create bg image frame
         self.bg_image = tb.PhotoImage(file="img\saams_main.png")
-        self.bg_img = tb.Canvas(self.root, width=1100, height= 900)
+        self.bg_img = tb.Canvas(self.root, width=2000, height= 1400)
         self.bg_img.pack(fill="both", expand=True)
         self.bg_img.create_image(0,0, image= self.bg_image, anchor="nw") 
         
 
         # Create Navigation Frame
         self.nav = tb.Frame(self.bg_img)
-        self.nav.grid(row=0, column=0, columnspan=10)
+        self.nav.grid(row=0, column=0, columnspan=4)
 
         self.save = tb.Button(self.nav, text="Save").grid(row=0, column=0, ipadx=100)
         self.tool_mg = tb.Button(self.nav, text="Tool Management").grid(row=0, column=1, padx=10, ipadx=100)
@@ -36,7 +36,7 @@ class Window_main:
         self.tabs.add(self.tab1, text="Enter Specifications")
         self.tabs.add(self.tab2, text="Standard Table")
 
-        self.tabs.grid(row=1, pady=15)
+        self.tabs.grid(row=1, columnspan=6 , pady=15)
 
         # --------------------------Add to tab 1 ----------------------------------------------
         # Add Labels
@@ -65,7 +65,7 @@ class Window_main:
 
 
         # Add Tab1 Expansion after Submit
-        self.tab1_expand = tb.Frame(self.tab1)
+        self.tab1_expand = tb.Frame(self.bg_img)
         self.tab1_expand_dash = tb.Frame(self.tab1_expand)
         self.tab1_expand_table = tb.Frame(self.tab1_expand)
         self.tab1_expand_dash.grid(row=0, column=6, rowspan=4, padx=25)
@@ -91,7 +91,7 @@ class Window_main:
         gap = self.gap.get()
         clearance = self.clearance.get()
         unit = self.unit.get()
-        self.tab1_expand.grid(row=0, column=6, rowspan=20, padx=25)
+        self.tab1_expand.grid(row=1, column=6, rowspan=20, padx=25)
         self.dash.display_converted_units([width, gauge, clearance, unit])
 
     # Enter Key - Submit function 
