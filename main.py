@@ -2,6 +2,7 @@
 
 import ttkbootstrap as tb
 import tkbuilder as tkb
+from ttkbootstrap.scrolled import ScrolledFrame as Sf
 
 
 # Create Main Window
@@ -10,7 +11,7 @@ class Window_main:
         # Add title and geometry
         self.root = root
         self.title = self.root.title("Slitter Arbor Management System")
-        self.geometry = self.root.geometry("1700x900")
+        self.geometry = self.root.geometry("1900x900")
 
         # Create bg image frame
         self.bg_image = tb.PhotoImage(file="img\saams_main.png")
@@ -68,9 +69,10 @@ class Window_main:
         self.tab1_expand_dash = tb.Frame(self.tab1_expand)
         self.tab1_expand_table = tb.Frame(self.tab1_expand)
         self.tab1_expand_dash.grid(row=0, column=6, rowspan=4, padx=25)
-        self.tab1_expand_table.grid(row=4, column=6, rowspan=10, padx=25)
+        self.tab1_expand_table.grid(row=4, column=6, rowspan=8, padx=25)
         self.dash = tkb.Dash_Tab1(self.tab1_expand_dash)
-        self.table = tkb.Table_tab1(self.tab1_expand_table)
+        self.table = tkb.Tab1_Table(self.tab1_expand_table)
+        self.update = tb.Button(self.tab1_expand_dash, text="Add Strips", command= lambda a = self.tab1_expand_table: self.update_strip(a)).grid(row=4, column=0)
         self.tab1_expand.grid_remove()
 
 
@@ -89,7 +91,7 @@ class Window_main:
         gap = self.gap.get()
         clearance = self.clearance.get()
         unit = self.unit.get()
-        self.tab1_expand.grid(row=0, column=6, rowspan=10, padx=25)
+        self.tab1_expand.grid(row=0, column=6, rowspan=20, padx=25)
         self.dash.display_converted_units([width, gauge, clearance, unit])
 
     # Enter Key - Submit function 
@@ -120,6 +122,12 @@ class Window_main:
             i.delete(0, tb.tk.END)
             i.insert(0, 0)
         return
+
+    def update_strip(self, frame):
+        #add_row = int(self.dash.strip_num.get())
+        self.table.add_row(frame)
+
+        #self.table = tkb.Table_tab1(self.tab1_expand_table, ROWS=4 + add_row)
 
 
 

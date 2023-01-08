@@ -1,4 +1,6 @@
 import ttkbootstrap as tb
+from ttkbootstrap.scrolled import ScrolledFrame as Sf
+import csv
 
 
 # Function event to allow user to move between widgets using UP and DOWN keys
@@ -86,46 +88,103 @@ def correct_int(key_val):
             return False
 
 
-class Table_tab1:
+
+class Tab1_Table:
     def __init__(self, frame):
-        ROWS = 4
-        COLS = 4
-        col_names = ["Strip ID", "Strip Qty", "Strip Width (mm)", "Strip Total (mm)" ]
-        self.entry = {}
-        self.label = {}
-        self.var = {}
-        counter = 0
-        table_entry_style = tb.Style().configure('litera.TEntry', fieldbackground= 'white', foreground='black', insertcolor="black")
-        table_label_style = tb.Style().configure('light.TEntry', fieldbackground= '#FF7F7F', foreground='black')
-        for rows in range(1, ROWS):
-            for col in range(0, COLS):
-                if rows == 1:
-                    self.label[counter] = tb.Entry(frame, style="light.TEntry", width=20)
-                    self.label[counter].grid(row=rows, column=col)
-                    self.label[counter].insert(0, col_names[col])
-                    self.label[counter].configure(state="readonly")
-                elif rows != 1:
-                    self.entry[counter] = tb.Entry(frame, style="litera.TEntry", width=20)
-                    self.entry[counter].grid(row=rows, column= col)
-                    self.entry[counter].bind("<Down>", lambda event, self_ = self.entry, c = counter: self.down(event, self_, c, COLS))
-                    self.entry[counter].bind("<Up>", lambda event, self_ = self.entry, c = counter: self.up(event, self_, c, COLS))
-                    self.entry[counter].bind("<Left>", lambda event, self_ = self.entry, c = counter: self.left(event, self_, c, COLS))
-                    self.entry[counter].bind("<Right>", lambda event, self_ = self.entry, c = counter: self.right(event, self_, c, COLS))
-                counter = counter + 1
-    
-    # Functions to move through the table using keys "Down", "Up", "Left", "Right"
-    def down(object_table, event, self_, c, cols):
-        self_[c + cols].focus_set()
-        return
-    def up(object_table, event, self_, c, cols):
-        self_[c - cols].focus_set()
-        return
-    def left(object_table, event, self_, c, cols):
-        self_[c - 1].focus_set()
-        return
-    def right(object_table, event, self_, c, cols):
-        self_[c + 1].focus_set()
-        return
+        # Add Scrollable Frame
+        self.frame = Sf(frame, width=1100, height=220)
+        self.frame.grid(row=1, column=0, columnspan=6)
+
+        # read dafult values for table from csv
+        with open('default_values\Tab1_Table.csv', 'r') as file:
+            reader = csv.reader(file)
+            data = []
+            for line in reader:
+                data.append(line)
+
+        # Set Styles for table
+        entry_style = tb.Style().configure('litera.TEntry', fieldbackground= 'white', foreground='black', insertcolor="black")
+        label_style = tb.Style().configure('light.TEntry', fieldbackground= '#FF7F7F', foreground='black')
+        entry_style = tb.Style().configure('end.TEntry', fieldbackground= '#01cdfe', foreground='black', insertcolor="black")
+        
+        # Create Table and save each entry into a matrix
+        self.entry_table = []
+        for i in range(0, len(data)):
+            row = []
+            for j in range(0, len(data[0])):
+                if i == 0:
+                    entry = tb.Entry(frame, style="light.TEntry", width=20)
+                    entry.insert(0, data[i][j])
+                    entry.configure(state="readonly")
+                    row.append(entry)
+                elif i == (len(data) - 1):
+                    entry = tb.Entry(frame, style="litera.TEntry", width=20)
+                    entry.insert(0, data[i][j])
+                    if j == (len(data[0]) - 1):
+                        entry.configure(style="end.TEntry")
+                    row.append(entry)
+                else:
+                    entry = tb.Entry(self.frame, style="litera.TEntry", width=20)
+                    entry.insert(0, data[i][j])
+                    row.append(entry)
+            self.entry_table.append(row)
+        
+        self.add_grids()
+
+    # function used to update / add binding to each entry and grid them onto the table to show
+    def add_grids(self):
+        for i in range(0, len(self.entry_table)):
+            for j in range(0, len(self.entry_table[0])):
+                self.entry_table[i][j].bind("<Down>", lambda event, i = i, j = j: self.down(event, i, j))
+                self.entry_table[i][j].bind("<Up>", lambda event, i = i, j = j: self.up(event, i, j))
+                self.entry_table[i][j].bind("<Left>", lambda event, i = i, j = j: self.left(event, i, j))
+                self.entry_table[i][j].bind("<Right>", lambda event, i = i, j = j: self.right(event, i, j))
+                self.entry_table[i][j].grid(row=i, column= j)
+
+    # function used to "unbind" and remove grid locations on table. Used to re-update position of rows in table   
+    def remove_grid(self):
+        for i in range(0, len(self.entry_table)):
+            for j in range(0, len(self.entry_table[0])):
+                self.entry_table[i][j].unbind("<Down>")
+                self.entry_table[i][j].unbind("<Up>")
+                self.entry_table[i][j].unbind("<Left>")
+                self.entry_table[i][j].unbind("<Right>")
+                self.entry_table[i][j].grid_remove()
+
+    # function used to add a New Row to the table
+    def add_row(self, frame):
+        row = []
+        self.remove_grid()
+        for j in range(0, len(self.entry_table[0])):
+            entry = tb.Entry(self.frame, style="litera.TEntry", width=20)
+            if j == 0:
+                entry.insert(0, len(self.entry_table) - 2)
+            row.append(entry)
+        self.entry_table.insert(len(self.entry_table) - 1, row)
+        self.add_grids()
+
+    # functions used to move UP, DOWN, RIGHT, LEFT on the table
+    def down(self, event, i, j):
+        try:
+            self.entry_table[i + 1][j].focus_set()
+        except IndexError:
+            pass
+    def up(self, event, i, j):
+        try:
+            self.entry_table[i - 1][j].focus_set()
+        except IndexError:
+            pass
+    def left(self, event, i, j):
+        try:
+            self.entry_table[i][j - 1].focus_set()
+        except IndexError:
+            pass
+    def right(self, event, i, j):
+        try:
+            self.entry_table[i][j + 1].focus_set()
+        except IndexError:
+            pass
+
 
 
 class Dash_Tab1:
@@ -167,7 +226,8 @@ class Dash_Tab1:
         self.gauge_converted.grid(row=2, column=3, sticky='e',padx=10)
         self.clearance_converted = tb.Label(frame, text='')
         self.clearance_converted.grid(row=3, column=3, sticky='e',padx=10)
-        
+
+    # Update Units and values shown on Dash   
     def display_converted_units(self, list_a):
         self.width.configure(text=str(list_a[0]))
         self.gauge.configure(text=str(list_a[1]))
@@ -184,17 +244,22 @@ class Dash_Tab1:
         self.gauge_converted.configure(text=str(list_b[1]))
         self.clearance_converted.configure(text=str(list_b[2]))
 
+    # function used to convert units from (mm) to (in)
     def convert_mm_to_in(self, list_a):
         list_b = []
         for i in list_a:
             list_b.append(round(float(i) * 0.03937007874, 2))
         return list_b
 
+    # function used to convert units from (in) to (mm)
     def convert_in_to_mm(self, list_a):
         list_b = []
         for i in list_a:
             list_b.append(round(float(i) * 25.4, 2))
         return list_b
+
+ 
+
 
 
     
