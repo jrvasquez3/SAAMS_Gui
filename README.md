@@ -18,7 +18,7 @@ pip install ttkbootstrap
 
 ```
 
-<img src="README_img\Main_Menu.PNG"/>
+<img src="README_img\Main_Menu_2.PNG"/>
 
 
 

@@ -3,6 +3,7 @@
 import ttkbootstrap as tb
 import tkbuilder as tkb
 from ttkbootstrap.scrolled import ScrolledFrame as Sf
+import window_tool_management as Wtm
 
 
 # Create Main Window
@@ -25,7 +26,7 @@ class Window_main:
         self.nav.grid(row=0, column=0, columnspan=4)
 
         self.save = tb.Button(self.nav, text="Save").grid(row=0, column=0, ipadx=100)
-        self.tool_mg = tb.Button(self.nav, text="Tool Management").grid(row=0, column=1, padx=10, ipadx=100)
+        self.tool_mg = tb.Button(self.nav, text="Tool Management", command=self.open_new_window).grid(row=0, column=1, padx=10, ipadx=100)
         self.exit = tb.Button(self.nav, text="Exit", command=self.root.destroy).grid(row=0, column=2, ipadx=100)
 
         # Create Notebook with Tab 1 and Tab 2
@@ -128,6 +129,13 @@ class Window_main:
         self.table.add_row(frame)
 
         #self.table = tkb.Table_tab1(self.tab1_expand_table, ROWS=4 + add_row)
+
+    def open_new_window(self):
+        new_window = tb.Toplevel()
+        new_window.geometry("1000x600")
+        new_app = Wtm.ToolManagement(new_window)
+        new_app.pack()
+
 
 
 
