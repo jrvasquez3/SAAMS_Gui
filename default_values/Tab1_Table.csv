@@ -1,7 +1,7 @@
-ID,Qty,Width,Total
-Left Scrap,1,1,1
-1,0,0,0
-2,0,0,0
-3,0,0,0
-4,0,0,0
-Right Scrap,1,1,1
+ID,Qty,knife,Width,Total
+Left Scrap,1,k6,1,1
+1,0,k6,0,0
+2,0,k6,0,0
+3,0,k6,0,0
+4,0,k6,0,0
+Right Scrap,1,k6,1,1

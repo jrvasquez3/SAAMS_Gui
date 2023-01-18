@@ -1,6 +1,7 @@
 import ttkbootstrap as tb
 from ttkbootstrap.scrolled import ScrolledFrame as Sf
 import csv
+import pandas as pd
 
 
 # Function event to allow user to move between widgets using UP and DOWN keys
@@ -92,8 +93,8 @@ def correct_int(key_val):
 class Tab1_Table:
     def __init__(self, frame):
         # Add Scrollable Frame
-        self.frame = Sf(frame, width=1100, height=220)
-        self.frame.grid(row=1, column=0, columnspan=6)
+        self.frame = Sf(frame, width=1370, height=220)
+        self.frame.grid(row=1, column=0, columnspan=5)
 
         # read dafult values for table from csv
         with open('default_values\Tab1_Table.csv', 'r') as file:
@@ -202,10 +203,10 @@ class Tab1_Table:
     def calculate_total(self, event= False):
         for row in self.entry_table[1:]:
             val1 = row[1].get()
-            val2 = row[2].get()
+            val2 = row[3].get()
             total = float(val1)*float(val2)
-            row[3].delete(0, tb.tk.END)
-            row[3].insert(0, round(total, 2))
+            row[4].delete(0, tb.tk.END)
+            row[4].insert(0, round(total, 2))
 
 
 
@@ -279,6 +280,45 @@ class Dash_Tab1:
         for i in list_a:
             list_b.append(round(float(i) * 25.4, 2))
         return list_b
+
+
+
+class tree_builder:
+    def __init__(self, frame, df):
+        '''
+        frame = Enter Frame where you want this tree to be created at
+        df = Enter pandas dataframe
+        '''
+        self.tree = tb.Treeview(frame, height=15)
+        s = tb.Style()
+        s.configure('mystyle.Treeview', background='white', foreground='black')
+        #tree_style = tb.Style().configure('litera.TEntry', fieldbackground= 'white', foreground='black', insertcolor="black")
+
+        self.tree.configure(style='mystyle.Treeview')
+        self.tree.pack(expand='YES', fill='both', side='left')
+        #self.tree.grid(row=0, column=0, padx=1)
+
+        column_names = tuple(df.keys())
+        self.tree["columns"] = column_names
+        for i in column_names:
+            self.tree.column(i, stretch='YES', anchor='w')
+            self.tree.heading(i, text=i, anchor='w')
+
+        self.populate_treeview(df)
+
+    def populate_treeview(self, df):
+        for i in range(len(df)):
+            self.tree.insert('', 'end', values=(df.iloc[i]['Gauge (in)'], 
+                                      df.iloc[i]['Customer'], 
+                                      df.iloc[i]['Grade'],
+                                      df.iloc[i]['Clearance % to use'],
+                                      df.iloc[i]['Female Rubber'],
+                                      df.iloc[i]['Male rubber'],
+                                      df.iloc[i]['MPA Quality Min/Max'],
+                                      df.iloc[i]['Comments']))
+
+
+
 
  
 

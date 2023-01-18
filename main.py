@@ -4,7 +4,8 @@ import ttkbootstrap as tb
 import tkbuilder as tkb
 from ttkbootstrap.scrolled import ScrolledFrame as Sf
 import window_tool_management as Wtm
-
+import main_2 as m2
+import pandas as pd
 
 # Create Main Window
 class Window_main:
@@ -12,7 +13,7 @@ class Window_main:
         # Add title and geometry
         self.root = root
         self.title = self.root.title("Slitter Arbor Management System")
-        self.geometry = self.root.geometry("2200x1000")
+        self.geometry = self.root.geometry("2600x1000")
 
         # Create bg image frame
         self.bg_image = tb.PhotoImage(file="img\saams_main.png")
@@ -23,9 +24,10 @@ class Window_main:
 
         # Create Navigation Frame
         self.nav = tb.Frame(self.bg_img)
-        self.nav.grid(row=0, column=0, columnspan=4)
+        self.nav.place(x=10, y=10)
+        #self.nav.grid(row=0, column=0, columnspan=4)
 
-        self.save = tb.Button(self.nav, text="Save").grid(row=0, column=0, ipadx=100)
+        self.save = tb.Button(self.nav, text="Save", command=self.open_assembly).grid(row=0, column=0, ipadx=100)
         self.tool_mg = tb.Button(self.nav, text="Tool Management", command=self.open_new_window).grid(row=0, column=1, padx=10, ipadx=100)
         self.exit = tb.Button(self.nav, text="Exit", command=self.root.destroy).grid(row=0, column=2, ipadx=100)
 
@@ -37,7 +39,8 @@ class Window_main:
         self.tabs.add(self.tab1, text="Enter Specifications")
         self.tabs.add(self.tab2, text="Standard Table")
 
-        self.tabs.grid(row=1, columnspan=6 , pady=15)
+        self.tabs.place(x= 10, y= 70)
+        #self.tabs.grid(row=1, columnspan=6 , pady=15)
 
         # --------------------------Add to tab 1 ----------------------------------------------
         # Add Labels
@@ -65,21 +68,30 @@ class Window_main:
         self.clear = tb.Button(self.tab1, command=self.clear_tab1, text="Clear").grid(row=8, column=2)
 
 
+        # df for setup
+        df = pd.read_excel('default_values\Setup_guidelines.xlsx')
+        df = df.drop(df.columns[0], axis=1)
+
         # Add Tab1 Expansion after Submit
         self.tab1_expand = tb.Frame(self.bg_img)
-        self.tab1_expand_dash = tb.Frame(self.tab1_expand)
-        self.tab1_expand_table = tb.Frame(self.tab1_expand)
-        self.tab1_expand_dash.grid(row=0, column=6, rowspan=4, padx=25)
-        self.tab1_expand_table.grid(row=4, column=6, rowspan=8, padx=25)
-        self.dash = tkb.Dash_Tab1(self.tab1_expand_dash)
-        self.table = tkb.Tab1_Table(self.tab1_expand_table)
-        self.update = tb.Button(self.tab1_expand_dash, text="Add Strips", command= lambda a = self.tab1_expand_table: self.update_strip(a)).grid(row=4, column=0)
-        self.tab1_expand.grid_remove()
+        #self.tab1_expand_dash = tb.Frame(self.tab1_expand)
+        #self.tab1_expand_table = tb.Frame(self.tab1_expand)
+        #self.tab1_expand_dash.grid(row=0, column=6, rowspan=4, padx=25)
+        #self.tab1_expand_table.grid(row=4, column=6, rowspan=8, padx=25)
+        self.tree = tkb.tree_builder(self.tab1_expand, df)
+        #self.dash = tkb.Dash_Tab1(self.tab1_expand_dash)
+        #self.table = tkb.Tab1_Table(self.tab1_expand_table)
+        #self.update = tb.Button(self.tab1_expand_dash, text="Add Strips", command= lambda a = self.tab1_expand_table: self.update_strip(a)).grid(row=4, column=0)
+        self.tab1_expand.place(x= 500, y=70)
+        #self.tab1_expand.grid(row=1, column=6, rowspan=20, padx=15)
 
 
         
         # ---------------------------------- Add to tab 2 ---------------------------------------------
         label2 = tb.Label(self.tab2, text="This is Tab 2").grid(row=0, column=0)
+        self.tab2_table = tb.Frame(self.tab2)
+        self.tab2_table.grid(row=1, column=5)
+
 
 
     # Creation of Entry for Tab 1 ------------------------------------------
@@ -92,8 +104,10 @@ class Window_main:
         gap = self.gap.get()
         clearance = self.clearance.get()
         unit = self.unit.get()
-        self.tab1_expand.grid(row=1, column=6, rowspan=20, padx=25)
-        self.dash.display_converted_units([width, gauge, clearance, unit])
+        info = [width, gauge, clearance, unit]
+        self.open_assembly(info)
+        #self.tab1_expand.grid(row=1, column=6, rowspan=20, padx=25)
+        #self.dash.display_converted_units([width, gauge, clearance, unit])
 
     # Enter Key - Submit function 
     def enter_key_tab1(self, event):
@@ -135,6 +149,13 @@ class Window_main:
         new_window.geometry("1000x600")
         new_app = Wtm.ToolManagement(new_window)
         new_app.pack()
+
+    def open_assembly(self, info=None):
+        new_window = tb.Toplevel()
+        new_window.geometry("1500x1100")
+        new_app = m2.assembly(new_window)
+        new_app.pack()
+        new_app.dash.display_converted_units(info)
 
 
 
